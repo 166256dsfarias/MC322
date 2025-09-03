@@ -32,5 +32,5 @@ public abstract class Heroi extends Personagem {
     }
 
     // contrato de habilidade especial (cada herói terá a sua)
-    public abstract void usarHabilidadeEspecial(Personagem Alvo);
+    public abstract void usarHabilidadeEspecial(Personagem alvo);
 }
