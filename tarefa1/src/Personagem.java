@@ -21,8 +21,7 @@ public abstract class Personagem {
         System.out.println("Vida: "+ pontosDeVida);
     }
 
-    // Contrato que as subclasses devem implementar
+    // Contrato que as subclasses devem implementar, onde cada persongem possui uma forma distinta para atacar
     public abstract void atacar(Personagem alvo);
-
 
 }
