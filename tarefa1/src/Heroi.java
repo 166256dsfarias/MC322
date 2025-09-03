@@ -1,5 +1,5 @@
 public abstract class Heroi extends Personagem {
-    //Atributos extras dos personagens herois: Harry, Hermione...
+    //Atributos extras dos personagens herois: Aluno e professor
     protected int nivel;
     protected int experiencia;
 

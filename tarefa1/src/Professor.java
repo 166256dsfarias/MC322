@@ -1,6 +1,6 @@
 public class Professor extends Heroi{
-    //atributo exclusivo dos professores de Hogwarts
-    int tempoDeMagisterio;
+    //atributo exclusivo dos professores de Hogwarts: Snape, Dumbledore
+    private int tempoDeMagisterio;
 
     //Construtor
     public Professor (String nome, int pontosDeVida, int forca, int nivel, int experiencia, int tempoDeMagisterio){

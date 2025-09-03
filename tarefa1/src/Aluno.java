@@ -1,5 +1,5 @@
 public class Aluno extends Heroi{
-    //atributo exclusivo dos alunos de Hogwarts
+    //atributo exclusivo dos alunos de Hogwarts: Harry Hermione
     private String casa;
 
     //Construtor
