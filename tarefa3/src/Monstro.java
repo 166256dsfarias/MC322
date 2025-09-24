@@ -1,30 +1,53 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public abstract class Monstro extends Personagem{  
-    //Atributos extras dos personagens monstros: comensal da morte, dementador
+public abstract class Monstro extends Personagem implements Combatente, Lootavel {
     protected int xpConcedido;
     protected ArrayList<Arma> listaDeArmasParaLargar;
+    protected List<AcaoDeCombate> acoes;
 
-    //Construtor
-    public Monstro (String nome, int pontosDeVida, int forca, Arma arma, int xpConcedido, ArrayList<Arma> listaDeArmasParaLargar){
-        super (nome, pontosDeVida, forca, arma);
+    public Monstro(String nome, int pontosDeVida, int forca, Arma arma, int xpConcedido, ArrayList<Arma> listaDeArmasParaLargar){
+        super(nome, pontosDeVida, forca, arma);
         this.xpConcedido = xpConcedido;
         this.listaDeArmasParaLargar = listaDeArmasParaLargar;
+        this.acoes = new ArrayList<>();
     }
 
-    // sobrescreve exibirStatus para mostrar também nivel e xp
+    public int getXpConcedido() {
+        return xpConcedido;
+    }
+
+    public List<AcaoDeCombate> getAcoes() {
+        return acoes;
+    }
+
     @Override
-    public void exibirStatus(){
-        super.exibirStatus();
-        System.out.println("Experiencia Concedida: " + this.xpConcedido);
-
-    }
-    //funcao de largar arma
-    public Arma largaArma(){
+    public AcaoDeCombate escolherAcao(Combatente alvo) {
         Random random = new Random();
-        int indice = random.nextInt(listaDeArmasParaLargar.size()); // gera um indice aleatorio dentro da lista
-        return listaDeArmasParaLargar.get(indice); //retorna uma arma aleatoria
+        return acoes.get(random.nextInt(acoes.size()));
     }
 
+    @Override
+    public boolean estaVivo() {
+        return pontosDeVida > 0;
+    }
+
+    @Override
+    public void receberDano(int dano) {
+        pontosDeVida -= dano;
+        if(pontosDeVida < 0) pontosDeVida = 0;
+    }
+
+    @Override
+    public void receberCura(int cura) {
+        pontosDeVida += cura;
+    }
+
+    @Override
+    public Item droparLoot() {
+        if(listaDeArmasParaLargar.isEmpty()) return null;
+        Random random = new Random();
+        return listaDeArmasParaLargar.get(random.nextInt(listaDeArmasParaLargar.size()));
+    }
 }

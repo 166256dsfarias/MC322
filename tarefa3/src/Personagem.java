@@ -1,4 +1,4 @@
-public abstract class Personagem {
+public abstract class Personagem implements Combatente {
     // Inspirado no universo de Harry Potter, todos os personagens serão MAGOS
     protected String nome;
     protected int pontosDeVida;
@@ -13,10 +13,23 @@ public abstract class Personagem {
         this.arma = arma;
     }
 
+    @Override
+    public String getNome() {
+        return this.nome;
+    }
+
+    @Override
+    public boolean estaVivo() {
+        return this.pontosDeVida > 0;
+    }
+
     public void receberDano (int dano){
         this.pontosDeVida -= dano;
         this.pontosDeVida = this.pontosDeVida < 0 ? 0 : pontosDeVida; //evitar que alguem fique com vida negativa
     }
+
+    @Override
+    public abstract AcaoDeCombate escolherAcao(Combatente alvo); // escolha da ação
 
     public void exibirStatus (){
         System.out.println("Nome: "+ nome);
