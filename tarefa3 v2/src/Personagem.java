@@ -1,29 +1,50 @@
-public abstract class Personagem {
-    // Inspirado no universo de Harry Potter, todos os personagens serão MAGOS
+import java.util.List;
+
+public abstract class Personagem implements Combatente {
     protected String nome;
     protected int pontosDeVida;
     protected int forca;
     protected Arma arma;
 
     //Construtor
-    public Personagem (String nome, int pontosDeVida, int forca, Arma arma){
+    public Personagem(String nome, int pontosDeVida, int forca, Arma arma) {
         this.nome = nome;
         this.pontosDeVida = pontosDeVida;
         this.forca = forca;
         this.arma = arma;
     }
 
-    public void receberDano (int dano){
+    // Métodos da interface Combatente
+    @Override
+    public String getNome() {
+        return nome;
+    }
+
+    @Override
+    public boolean estaVivo() {
+        return pontosDeVida > 0;
+    }
+
+    @Override
+    public void receberDano(int dano) {
         this.pontosDeVida -= dano;
-        this.pontosDeVida = this.pontosDeVida < 0 ? 0 : pontosDeVida; //evitar que alguem fique com vida negativa
+        if (this.pontosDeVida < 0) this.pontosDeVida = 0;
     }
 
-    public void exibirStatus (){
-        System.out.println("Nome: "+ nome);
-        System.out.println("Vida: "+ pontosDeVida);
+    @Override
+    public void receberCura(int cura) {
+        this.pontosDeVida += cura;
     }
 
-    // Contrato que as subclasses devem implementar, onde cada persongem possui uma forma distinta para atacar
-    public abstract void atacar(Personagem alvo);
+    // Status
+    public void exibirStatus() {
+        System.out.println(nome + " | Vida: " + pontosDeVida + " | Força: " + forca);
+        if (arma != null) {
+            System.out.println("Arma equipada: " + arma.getNome());
+        }
+    }
 
+    // Agora o contrato é via Combatente
+    @Override
+    public abstract AcaoDeCombate escolherAcao(Combatente alvo);
 }

@@ -1,63 +1,71 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         // Criar o herói
         Heroi harry = new Aluno("Harry Potter", 200, 20, 1, 0.5, 0, new VarinhaDeSabugueiro(), "Grifinória");
 
-        //metodo contrutor de cenario
-        int nFases = 3;
-        ArrayList<Fase> fases = ConstrutorDeCenario.gerarFases(nFases);
+        // Criar as fases usando o construtor de cenário fixo
+        GeradorDeFases gerador = new ConstrutorDeCenarioFixo();
+        List<Fase> fases = gerador.gerar(3);
 
-        // Mensagem inicial/loop para cada fase
-        for(Fase fase : fases){
-            System.out.println("O herói entra na " + fase.ambiente + " para enfrentar " + fase.lista_monstros.size() + " monstros perigosos!");
+        // Loop principal para cada fase
+        for (Fase fase : fases) {
+            System.out.println("\n=== INÍCIO DA FASE: " + fase.getTipoDeCenario().getDescricao() + " ===");
+            fase.iniciar(harry); // aplica efeitos do cenário
+            System.out.println("O herói entra na fase para enfrentar " + fase.getMonstros().size() + " monstros!");
             harry.exibirStatus();
-        
-        // Simulaçao dos Turnos em Loop
-        for (int i = 0; i < fase.lista_monstros.size(); i++) {
-            Monstro monstroAtual = fase.lista_monstros.get(i);
-            System.out.println("\nTurno " + (i + 1) + ": " + monstroAtual.nome + " aparece!");
 
-            // Herói ataca o monstro
-            harry.atacar(monstroAtual);
+            // Loop para cada monstro da fase
+            for (Monstro monstro : fase.getMonstros()) {
+                System.out.println("\nO monstro " + monstro.getNome() + " aparece!");
 
-            // verifica se o monstro morreu
-            if (monstroAtual.pontosDeVida <= 0) {
-                System.out.println(monstroAtual.nome + " foi derrotado!");
-                harry.ganharExperiencia(monstroAtual.xpConcedido);
-                continue; // vai para o próximo turno
+                // Loop de combate
+                while (harry.estaVivo() && monstro.estaVivo()) {
+                    // Herói escolhe ação e executa
+                    AcaoDeCombate acaoHeroi = harry.escolherAcao(monstro);
+                    acaoHeroi.executar(harry, monstro);
+
+                    // Verifica se monstro morreu
+                    if (!monstro.estaVivo()) {
+                        System.out.println(monstro.getNome() + " foi derrotado!");
+                        harry.ganharExperiencia(monstro.getXpConcedido());
+
+                        // Teste de sorte e loot
+                        double chance = Math.random();
+                        if (harry.sorte > chance && monstro instanceof Lootavel) {
+                            Item loot = ((Lootavel) monstro).droparLoot();
+                            System.out.println("O monstro deixou: " + loot.getNome());
+                            if (harry.nivel >= loot.getMinNivel() && loot instanceof Arma) {
+                                harry.equiparArma((Arma) loot);
+                            }
+                        }
+                        break;
+                    }
+
+                    // Monstro escolhe ação e executa
+                    AcaoDeCombate acaoMonstro = monstro.escolherAcao(harry);
+                    acaoMonstro.executar(monstro, harry);
+
+                    // Verifica se herói morreu
+                    if (!harry.estaVivo()) {
+                        System.out.println("Game Over! O herói foi derrotado.");
+                        break;
+                    }
+                }
+
+                if (!harry.estaVivo()) break;
             }
 
-            // Monstro ataca o heroi
-            monstroAtual.atacar(harry);
-
-            // verifica se o herói morreu
-            if (harry.pontosDeVida <= 0) {
-                System.out.println("Game Over! O herói foi derrotado.");
-                break; // encerra o loop
-            }
-            //teste sorte
-            double numero = Math.random();
-            if (harry.pontosDeVida > 0 && harry.sorte > numero) {
-                monstroAtual.largaArma();
-            }
-            if(harry.arma.dano < monstroAtual.arma.dano && harry.nivel >= monstroAtual.arma.minNivel){
-                harry.equiparArma(monstroAtual.arma);
-            }
-            // Status após o turno
-            System.out.println("\nStatus após o turno " + (i + 1) + ":");
-            harry.exibirStatus();
-            monstroAtual.exibirStatus();
+            if (!harry.estaVivo()) break;
         }
-    }
 
-
-        // Conclusão do Desafio
-        if (harry.pontosDeVida > 0) {
+        // Conclusão do desafio
+        if (harry.estaVivo()) {
             System.out.println("\nParabéns! O herói sobreviveu a todos os desafios!");
         } else {
-            System.out.println("\nO herói não conseguiu sobreviver à fase.");
+            System.out.println("\nO herói não conseguiu sobreviver às fases.");
         }
     }
 }
