@@ -1,31 +1,32 @@
 import java.util.List;
 
-public class FaseDeCombate implements FaseInterface {
+public class FaseDeCombate implements Fase {
+    private TipoCenario tipo;
     private List<Monstro> monstros;
-    private TipoCenario tipoCenario;
 
-    public FaseDeCombate(List<Monstro> monstros, TipoCenario tipoCenario){
+    public FaseDeCombate(TipoCenario tipo, List<Monstro> monstros) {
+        this.tipo = tipo;
         this.monstros = monstros;
-        this.tipoCenario = tipoCenario;
-    }
-
-    public List<Monstro> getMonstros() {
-        return monstros;
     }
 
     @Override
     public void iniciar(Heroi heroi) {
-        System.out.println("Iniciando fase em: " + tipoCenario.getDescricao());
-        tipoCenario.aplicarEfeitos(heroi);
+        System.out.println("Entrando na fase: " + tipo.getDescricao());
+        tipo.aplicarEfeitos(heroi);
     }
 
     @Override
     public boolean isConcluida() {
-        return monstros.stream().allMatch(monstro -> !monstro.estaVivo());
+        return monstros.stream().allMatch(m -> m.pontosDeVida <= 0);
     }
 
     @Override
     public TipoCenario getTipoDeCenario() {
-        return tipoCenario;
+        return tipo;
+    }
+
+    @Override
+    public List<Monstro> getMonstros() {
+        return monstros;
     }
 }

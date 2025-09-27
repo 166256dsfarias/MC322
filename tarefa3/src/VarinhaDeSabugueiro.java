@@ -1,8 +1,5 @@
-public class VarinhaDeSabugueiro extends Arma{
-    //sem atributos adicionais
-
-    //construtor
+public class VarinhaDeSabugueiro extends Arma {
     public VarinhaDeSabugueiro(){
-        super(25, 1);
+        super("Varinha de Sabugueiro", 25, 1); 
     }
 }

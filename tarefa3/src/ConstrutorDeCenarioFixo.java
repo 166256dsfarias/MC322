@@ -1,19 +1,23 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.List;           
+import java.util.ArrayList;     
 
 public class ConstrutorDeCenarioFixo implements GeradorDeFases {
-
     @Override
-    public List<FaseInterface> gerar(int quantidadeDeFases) {
-        List<FaseInterface> fases = new ArrayList<>();
+    public List<Fase> gerar(int quantidadeDeFases) {
+        List<Fase> fases = new ArrayList<>();
 
         for (int i = 0; i < quantidadeDeFases; i++) {
-            // Aqui você cria sua FaseDeCombate ou outra classe que implementa FaseInterface
-            FaseDeCombate fase = new FaseDeCombate();
-            fases.add(fase);
-        }
+            List<Monstro> monstros = new ArrayList<>();
+            monstros.add(new Dementador());
 
+            TipoCenario tipo = switch (i) {
+                case 0 -> TipoCenario.FLORESTA_PROIBIDA;
+                case 1 -> TipoCenario.SALAO_PRINCIPAL;
+                default -> TipoCenario.CABANA_DO_HAGRID;
+            };
+
+            fases.add(new FaseDeCombate(tipo, monstros));
+        }
         return fases;
     }
 }

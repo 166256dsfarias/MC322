@@ -8,12 +8,12 @@ public class Expelliarmus implements AcaoDeCombate {
     @Override
     public void executar(Combatente usuario, Combatente alvo) {
         System.out.println(usuario.getNome() + " lança Expelliarmus contra " + alvo.getNome() + "!");
-        alvo.receberDano(dano);
-        System.out.println(alvo.getNome() + " foi desarmado momentaneamente!");
+        alvo.receberDano(dano); // ← DEVE causar dano
+        System.out.println(alvo.getNome() + " recebeu " + dano + " de dano!");
     }
 
     @Override
     public String getDescricao() {
-        return "Expelliarmus";
+        return "Expelliarmus (Dano: " + dano + ")";
     }
 }

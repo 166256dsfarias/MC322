@@ -1,19 +1,19 @@
 public class ExpectoPatronum implements AcaoDeCombate {
-    private int cura;
+    private int dano;
 
-    public ExpectoPatronum(int cura) {
-        this.cura = cura;
+    public ExpectoPatronum(int dano) {
+        this.dano = dano;
     }
 
     @Override
     public void executar(Combatente usuario, Combatente alvo) {
         System.out.println(usuario.getNome() + " conjura um Patrono brilhante com EXPECTO PATRONUM!");
-        usuario.receberCura(cura);
-        System.out.println(usuario.getNome() + " sente a energia voltar graças ao Patrono!");
+        alvo.receberDano(dano);
+        System.out.println("O Patrono causa " + dano + " de dano em " + alvo.getNome() + "!");
     }
 
     @Override
     public String getDescricao() {
-        return "Expecto Patronum";
+        return "Expecto Patronum (Dano: " + dano + ")";
     }
 }

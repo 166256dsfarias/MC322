@@ -1,16 +1,16 @@
+import java.util.Arrays;
 import java.util.ArrayList;
 
 public class Dementador extends Monstro {
-    // sem atributos diferenciais
-
-    //Construtor
-    public Dementador (String nome, int pontosDeVida, int forca, Arma arma, int xpConcedido, ArrayList<Arma> listaDeArmasParaLargar){
-        super (nome, pontosDeVida, forca, arma, xpConcedido, listaDeArmasParaLargar);
+    
+    public Dementador() {
+        super("Dementador", 100, 15, new VarinhaDasTrevas(), 50, new ArrayList<>());
+        
+        this.acoes = Arrays.asList(new Expelliarmus(35));
     }
-
+    
     @Override
-    public void atacar (Personagem alvo){
-        System.out.println(this.nome + "  suga a energia vital de " + alvo.nome);
-        alvo.receberDano(forca);
+    public Item droparLoot() {
+        return new PocaoDeChocolate();
     }
 }

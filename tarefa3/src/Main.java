@@ -2,67 +2,81 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // Criar o herói e adicionar ações
+        // Criar herói
         Heroi harry = new Aluno("Harry Potter", 200, 20, 1, 0.5, 0, new VarinhaDeSabugueiro(), "Grifinória");
-        harry.getAcoes().add(new AtaqueFisico());
-        harry.getAcoes().add(new HabilidadeDeMagia());
 
-        // Criar o gerador de fases
-        GeradorDeFases gerador = new ConstrutorDeCenarioFixo(); 
-        List<FaseInterface> fases = gerador.gerar(3); // gera 3 fases
+        // Criar gerador de fases
+        GeradorDeFases gerador = new ConstrutorDeCenarioFixo();
+        List<Fase> fases = gerador.gerar(3);
 
-        // Loop para cada fase
-        for (FaseInterface fase : fases) {
+        // Loop por cada fase
+        for (Fase fase : fases) {
             fase.iniciar(harry);
-            System.out.println("O herói entrou no cenário: " + fase.getTipoDeCenario().getDescricao());
 
-            // Pega os monstros da fase
-            List<Monstro> monstros = ((FaseDeCombate) fase).getMonstros();
+            for (Monstro monstroAtual : fase.getMonstros()) {
+                System.out.println("\n=== " + monstroAtual.getNome() + " aparece! ===");
 
-            for (Monstro monstro : monstros) {
-                System.out.println("\nApareceu: " + monstro.getNome());
-
-                while (harry.estaVivo() && monstro.estaVivo()) {
-                    // Herói escolhe e executa ação
-                    AcaoDeCombate acaoHeroi = harry.escolherAcao(monstro);
-                    acaoHeroi.executar(harry, monstro);
-
-                    if (!monstro.estaVivo()) {
-                        System.out.println(monstro.getNome() + " foi derrotado!");
-                        harry.ganharExperiencia(monstro.getXpConcedido());
-
-                        // Loot
-                        if (monstro instanceof Lootavel lootavel) {
-                            Item loot = lootavel.droparLoot();
-                            if (loot instanceof Arma arma) {
-                                harry.equiparArma(arma);
-                            }
-                        }
+                int turno = 1;
+                while (harry.estaVivo() && monstroAtual.estaVivo()) {
+                    System.out.println("\n--- Turno " + turno + " ---");
+                    
+                    // Turno do herói
+                    AcaoDeCombate acaoHeroi = harry.escolherAcao(monstroAtual);
+                    if (acaoHeroi != null) {
+                        acaoHeroi.executar(harry, monstroAtual);
+                    }
+                    
+                    // Verifica se monstro morreu
+                    if (!monstroAtual.estaVivo()) {
+                        System.out.println(monstroAtual.getNome() + " foi derrotado!");
                         break;
                     }
 
-                    // Monstro escolhe e executa ação
-                    AcaoDeCombate acaoMonstro = monstro.escolherAcao(harry);
-                    acaoMonstro.executar(monstro, harry);
-
+                    // Turno do monstro
+                    AcaoDeCombate acaoMonstro = monstroAtual.escolherAcao(harry);
+                    if (acaoMonstro != null) {
+                        acaoMonstro.executar(monstroAtual, harry);
+                    }
+                    
+                    // Verifica se herói morreu
                     if (!harry.estaVivo()) {
-                        System.out.println("Game Over! O herói foi derrotado.");
+                        System.out.println("O herói foi derrotado!");
                         break;
+                    }
+                    
+                    turno++;
+                    
+                    // PROTEÇÃO CONTRA LOOP INFINITO - máximo 50 turnos
+                    if (turno > 50) {
+                        System.out.println("Combate muito longo! Interrompendo...");
+                        break;
+                    }
+                    
+                    // Pequena pausa para visualização
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
 
-                if (!harry.estaVivo()) {
-                    break; // sai da fase
-                }
-            }
+                if (harry.estaVivo()) {
+                    System.out.println("\n" + monstroAtual.getNome() + " derrotado!");
+                    harry.ganharExperiencia(50);
 
-            // Conclusão da fase
-            if (harry.estaVivo()) {
-                System.out.println("\nParabéns! O herói sobreviveu a esta fase!");
-            } else {
-                System.out.println("\nO herói não conseguiu sobreviver à fase.");
-                break;
+                    if (monstroAtual instanceof Lootavel) {
+                        Item loot = ((Lootavel) monstroAtual).droparLoot();
+                        if (loot != null) {
+                            System.out.println(harry.getNome() + " conseguiu loot: " + loot.getNome());
+                        }
+                    }
+                } else {
+                    System.out.println("Game Over! O herói foi derrotado.");
+                    return;
+                }
             }
         }
+
+        System.out.println("\nParabéns! O herói sobreviveu a todas as fases!");
     }
 }

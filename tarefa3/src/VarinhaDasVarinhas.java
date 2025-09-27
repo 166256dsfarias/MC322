@@ -3,6 +3,6 @@ public class VarinhaDasVarinhas extends Arma {
 
     //construtor
     public VarinhaDasVarinhas(){
-        super(60, 5);
+        super("VarinhaDasVarinhas", 60, 5);
     }
 }
